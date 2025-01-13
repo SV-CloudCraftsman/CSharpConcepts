@@ -1,0 +1,226 @@
+Dependency Injection (DI) in C#
+Dependency Injection (DI) is a design pattern that allows an object (or class) to receive its dependencies (e.g., services, components, or objects) from an external source rather than creating them internally. It promotes loose coupling, testability, and better maintainability of code.
+
+Core Concepts of DI
+Dependency: An object that another object depends on.
+Injection: The process of passing dependencies to a dependent object.
+Why Use Dependency Injection?
+Reduces tight coupling between classes.
+Improves code reusability and testability.
+Simplifies object creation and lifecycle management.
+Types of Dependency Injection
+Constructor Injection: Dependencies are provided through the class constructor.
+Property Injection: Dependencies are assigned via public properties.
+Method Injection: Dependencies are passed as method parameters.
+1. Constructor Injection
+Example: Without Dependency Injection
+csharp
+Copy code
+public class EmailService
+{
+    public void SendEmail(string message)
+    {
+        Console.WriteLine($"Email Sent: {message}");
+    }
+}
+
+public class Notification
+{
+    private EmailService _emailService;
+
+    public Notification()
+    {
+        _emailService = new EmailService(); // Tight coupling
+    }
+
+    public void Notify(string message)
+    {
+        _emailService.SendEmail(message);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var notification = new Notification();
+        notification.Notify("Hello World!");
+    }
+}
+Here, Notification is tightly coupled to EmailService. Changing EmailService will require modifying Notification.
+
+Example: With Constructor Injection
+csharp
+Copy code
+public interface IMessageService
+{
+    void Send(string message);
+}
+
+public class EmailService : IMessageService
+{
+    public void Send(string message)
+    {
+        Console.WriteLine($"Email Sent: {message}");
+    }
+}
+
+public class Notification
+{
+    private readonly IMessageService _messageService;
+
+    // Dependency is injected via the constructor
+    public Notification(IMessageService messageService)
+    {
+        _messageService = messageService;
+    }
+
+    public void Notify(string message)
+    {
+        _messageService.Send(message);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        IMessageService emailService = new EmailService();
+        var notification = new Notification(emailService);
+        notification.Notify("Hello World!");
+    }
+}
+Now, Notification depends on the abstraction (IMessageService), making it easier to replace or mock dependencies for testing.
+
+2. Property Injection
+Example
+csharp
+Copy code
+public interface IMessageService
+{
+    void Send(string message);
+}
+
+public class SmsService : IMessageService
+{
+    public void Send(string message)
+    {
+        Console.WriteLine($"SMS Sent: {message}");
+    }
+}
+
+public class Notification
+{
+    public IMessageService MessageService { get; set; } // Dependency injected via property
+
+    public void Notify(string message)
+    {
+        MessageService?.Send(message);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        var notification = new Notification
+        {
+            MessageService = new SmsService()
+        };
+        notification.Notify("Hello World via SMS!");
+    }
+}
+3. Method Injection
+Example
+csharp
+Copy code
+public interface IMessageService
+{
+    void Send(string message);
+}
+
+public class PushNotificationService : IMessageService
+{
+    public void Send(string message)
+    {
+        Console.WriteLine($"Push Notification Sent: {message}");
+    }
+}
+
+public class Notification
+{
+    public void Notify(string message, IMessageService messageService)
+    {
+        messageService.Send(message); // Dependency injected via method parameter
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        IMessageService pushService = new PushNotificationService();
+        var notification = new Notification();
+        notification.Notify("Hello via Push Notification!", pushService);
+    }
+}
+Using Dependency Injection Frameworks
+C# applications, especially ASP.NET Core, use built-in dependency injection frameworks to manage dependencies.
+
+Example: DI in ASP.NET Core
+csharp
+Copy code
+using Microsoft.Extensions.DependencyInjection;
+
+public interface IMessageService
+{
+    void Send(string message);
+}
+
+public class EmailService : IMessageService
+{
+    public void Send(string message)
+    {
+        Console.WriteLine($"Email Sent: {message}");
+    }
+}
+
+public class Notification
+{
+    private readonly IMessageService _messageService;
+
+    public Notification(IMessageService messageService)
+    {
+        _messageService = messageService;
+    }
+
+    public void Notify(string message)
+    {
+        _messageService.Send(message);
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Setup Dependency Injection
+        var serviceProvider = new ServiceCollection()
+            .AddTransient<IMessageService, EmailService>()
+            .AddTransient<Notification>()
+            .BuildServiceProvider();
+
+        // Resolve and use Notification
+        var notification = serviceProvider.GetService<Notification>();
+        notification.Notify("Hello via ASP.NET Core DI!");
+    }
+}
+Real-Time Applications
+Web Applications: Using DI for service layers, repositories, and controllers in ASP.NET Core.
+Unit Testing: Mocking dependencies to test components in isolation.
+Plug-and-Play Architecture: Replacing or extending functionality by swapping implementations.
+Benefits of DI
+Loose Coupling: Decouples dependent classes from their dependencies.
+Testability: Facilitates mocking for unit testing.
+Scalability: Easily add or replace implementations.
+By integrating DI, your applications become more modular, maintainable, and test-friendly, which is essential for modern software development practices.
