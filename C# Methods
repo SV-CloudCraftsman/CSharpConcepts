@@ -1,0 +1,148 @@
+C# Methods
+In C#, methods are blocks of code that perform a specific task and can be reused throughout the program. They help in organizing the code and improving readability.
+
+Defining and Calling Methods
+Defining a Method: A method consists of a return type, a name, optional parameters, and a body.
+Syntax:
+csharp
+Copy code
+return_type MethodName(parameters)
+{
+    // Method body
+}
+Calling a Method: Use the method name followed by parentheses and arguments (if any).
+Example:
+csharp
+Copy code
+using System;
+
+class Program
+{
+    // Method Definition
+    static void Greet()
+    {
+        Console.WriteLine("Hello, welcome to C#!");
+    }
+
+    static void Main()
+    {
+        // Method Call
+        Greet();
+    }
+}
+Method Parameters and Return Types
+Parameters: Allow methods to accept input values.
+Return Type: Specifies the type of value a method returns. Use void if no value is returned.
+Example:
+csharp
+Copy code
+using System;
+
+class Program
+{
+    // Method with Parameters and a Return Type
+    static int AddNumbers(int a, int b)
+    {
+        return a + b;
+    }
+
+    static void Main()
+    {
+        int result = AddNumbers(10, 20);
+        Console.WriteLine($"The sum is: {result}");
+    }
+}
+Method Overloading
+Method overloading allows defining multiple methods with the same name but different parameters.
+C# differentiates them based on:
+Number of parameters.
+Types of parameters.
+Example:
+csharp
+Copy code
+using System;
+
+class Program
+{
+    // Overloaded Methods
+    static int Multiply(int a, int b)
+    {
+        return a * b;
+    }
+
+    static double Multiply(double a, double b)
+    {
+        return a * b;
+    }
+
+    static void Main()
+    {
+        int result1 = Multiply(5, 4);
+        double result2 = Multiply(5.5, 4.5);
+
+        Console.WriteLine($"Integer Multiplication: {result1}");
+        Console.WriteLine($"Double Multiplication: {result2}");
+    }
+}
+Real-Time Examples
+Example 1: Calculator Application
+Create a simple calculator that performs addition, subtraction, multiplication, and division using methods.
+
+csharp
+Copy code
+using System;
+
+class Calculator
+{
+    static int Add(int a, int b) => a + b;
+    static int Subtract(int a, int b) => a - b;
+    static int Multiply(int a, int b) => a * b;
+    static double Divide(int a, int b) => (double)a / b;
+
+    static void Main()
+    {
+        Console.WriteLine("Enter two numbers:");
+        int num1 = int.Parse(Console.ReadLine());
+        int num2 = int.Parse(Console.ReadLine());
+
+        Console.WriteLine($"Addition: {Add(num1, num2)}");
+        Console.WriteLine($"Subtraction: {Subtract(num1, num2)}");
+        Console.WriteLine($"Multiplication: {Multiply(num1, num2)}");
+        Console.WriteLine($"Division: {Divide(num1, num2):0.00}");
+    }
+}
+Example 2: Area Calculator with Method Overloading
+csharp
+Copy code
+using System;
+
+class AreaCalculator
+{
+    // Overloaded methods for different shapes
+    static double CalculateArea(double radius)
+    {
+        return Math.PI * radius * radius; // Circle
+    }
+
+    static int CalculateArea(int length, int width)
+    {
+        return length * width; // Rectangle
+    }
+
+    static double CalculateArea(double baseLength, double height, string shape)
+    {
+        return 0.5 * baseLength * height; // Triangle
+    }
+
+    static void Main()
+    {
+        Console.WriteLine($"Area of Circle: {CalculateArea(5):0.00}");
+        Console.WriteLine($"Area of Rectangle: {CalculateArea(4, 6)}");
+        Console.WriteLine($"Area of Triangle: {CalculateArea(3.0, 4.0, \"Triangle\"):0.00}");
+    }
+}
+Key Points
+Methods improve code reusability and organization.
+Use parameters to make methods flexible.
+Method overloading adds versatility by allowing multiple versions of the same method.
+These concepts are essential for building scalable, modular applications like e-commerce platforms, banking systems, or REST APIs.
