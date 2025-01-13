@@ -1,0 +1,184 @@
+Generics in C#
+Generics provide a way to create type-safe and reusable code components. They allow you to define classes, methods, and collections that work with any data type without sacrificing type safety.
+
+1. Generic Types
+Generic types allow defining classes, interfaces, or structs that can work with any data type.
+
+Example: Generic Class
+csharp
+Copy code
+using System;
+
+class GenericBox<T>
+{
+    public T Value { get; set; }
+
+    public void DisplayType()
+    {
+        Console.WriteLine($"Type of T: {typeof(T)}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        GenericBox<int> intBox = new GenericBox<int> { Value = 42 };
+        intBox.DisplayType();
+        Console.WriteLine($"Value: {intBox.Value}");
+
+        GenericBox<string> stringBox = new GenericBox<string> { Value = "Hello, Generics" };
+        stringBox.DisplayType();
+        Console.WriteLine($"Value: {stringBox.Value}");
+    }
+}
+Real-Time Use Case
+Scenario: Implementing a Repository<T> class for database operations where T can be any entity like Customer, Order, or Product.
+2. Generic Methods
+Generic methods allow defining methods that can work with any data type, independent of the containing class.
+
+Example: Generic Method
+csharp
+Copy code
+using System;
+
+class Program
+{
+    static void Swap<T>(ref T a, ref T b)
+    {
+        T temp = a;
+        a = b;
+        b = temp;
+    }
+
+    static void Main()
+    {
+        int x = 5, y = 10;
+        Console.WriteLine($"Before Swap: x = {x}, y = {y}");
+        Swap(ref x, ref y);
+        Console.WriteLine($"After Swap: x = {x}, y = {y}");
+
+        string str1 = "First", str2 = "Second";
+        Console.WriteLine($"Before Swap: str1 = {str1}, str2 = {str2}");
+        Swap(ref str1, ref str2);
+        Console.WriteLine($"After Swap: str1 = {str1}, str2 = {str2}");
+    }
+}
+Real-Time Use Case
+Scenario: Writing utility methods, such as a method to find the maximum of two elements.
+3. Generic Collections
+The .NET Framework provides built-in generic collections, such as:
+
+List<T>: Dynamic array.
+Dictionary<TKey, TValue>: Key-value pairs.
+Queue<T>: FIFO collection.
+Stack<T>: LIFO collection.
+Example: Using List<T>
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        List<string> names = new List<string> { "Alice", "Bob", "Charlie" };
+        names.Add("David");
+
+        foreach (var name in names)
+        {
+            Console.WriteLine(name);
+        }
+    }
+}
+Real-Time Use Case
+Scenario: Storing a collection of user inputs dynamically without knowing the size upfront.
+4. Constraints on Generics
+Constraints define the specific requirements for the generic type parameter.
+
+Types of Constraints
+where T : struct: T must be a value type.
+where T : class: T must be a reference type.
+where T : new(): T must have a parameterless constructor.
+where T : SomeBaseClass: T must derive from SomeBaseClass.
+where T : SomeInterface: T must implement SomeInterface.
+Example: Using Constraints
+csharp
+Copy code
+using System;
+
+class Repository<T> where T : class, new()
+{
+    public T CreateInstance()
+    {
+        return new T();
+    }
+}
+
+class Customer
+{
+    public string Name { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Repository<Customer> repo = new Repository<Customer>();
+        Customer customer = repo.CreateInstance();
+        customer.Name = "John Doe";
+        Console.WriteLine($"Customer Name: {customer.Name}");
+    }
+}
+Real-Time Use Case
+Scenario: Creating a generic repository for Entity Framework models with constraints ensuring type safety.
+5. Nullable Types
+Nullable types allow value types to represent null.
+
+Key Points
+Use Nullable<T> or shorthand T?.
+Useful for scenarios where a value type (e.g., int, bool) might need to represent null.
+Example: Nullable Types
+csharp
+Copy code
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        int? age = null;
+        Console.WriteLine($"Age: {age ?? -1}"); // Default to -1 if null
+
+        age = 25;
+        if (age.HasValue)
+        {
+            Console.WriteLine($"Age is {age.Value}");
+        }
+    }
+}
+Real-Time Use Case
+Scenario: A database column (e.g., BirthDate) that allows NULL values.
+6. Advantages of Generics
+Type Safety: Ensures compile-time type checking.
+Performance: Avoids boxing/unboxing for value types.
+Code Reusability: Write generic code that works with any data type.
+Real-Time Scenario: E-commerce Application
+Generic Class:
+
+Use a GenericCart<T> class for handling items of different types (Product, Service).
+Generic Method:
+
+A utility method IsValid<T> to validate different entities (Customer, Order).
+Generic Constraints:
+
+Restrict generic repository methods to work only with classes implementing IEntity.
+Nullable Types:
+
+Handle optional discount values or out-of-stock product counts.
+Best Practices
+Use constraints (where) to ensure proper usage of generic types.
+Prefer built-in generic collections (List<T>, Dictionary<TKey, TValue>).
+Use nullable types for optional fields or database representations.
+Avoid overusing generics in situations where simpler solutions exist.
