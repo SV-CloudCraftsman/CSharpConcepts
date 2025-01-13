@@ -1,0 +1,179 @@
+C# Syntax and Structure
+C# is a statically typed, object-oriented language with a syntax similar to Java and C++. Let's explore its fundamental concepts with explanations and examples.
+
+Basic Data Types
+C# supports a variety of data types to store and manipulate data:
+
+int: Stores integers (e.g., 10, -5).
+string: Stores a sequence of characters (e.g., "Hello").
+float: Stores single-precision floating-point numbers (e.g., 3.14F).
+double: Stores double-precision floating-point numbers (e.g., 3.14159).
+bool: Stores Boolean values (true or false).
+Example:
+csharp
+Copy code
+int age = 25;
+string name = "Alice";
+float pi = 3.14F;
+double largeNumber = 123456.789;
+bool isAdult = true;
+
+Console.WriteLine($"Name: {name}, Age: {age}, Is Adult: {isAdult}");
+Variables, Constants, and Literals
+Variable: A named memory location to store data.
+Constant: A value that doesn’t change.
+Literals: Fixed values assigned to variables.
+Example:
+csharp
+Copy code
+int number = 10;               // Variable
+const double Pi = 3.14159;     // Constant
+char initial = 'A';            // Literal
+
+Console.WriteLine($"Number: {number}, Pi: {Pi}, Initial: {initial}");
+Arithmetic and Logical Operators
+Arithmetic Operators: +, -, *, /, %
+Logical Operators: &&, ||, !
+Example:
+csharp
+Copy code
+int a = 10, b = 20;
+int sum = a + b;
+bool isGreater = a > b;
+
+Console.WriteLine($"Sum: {sum}, Is a greater than b? {isGreater}");
+Input/Output
+Console.ReadLine: Reads input from the user.
+Console.WriteLine: Prints output to the console.
+Example:
+csharp
+Copy code
+Console.WriteLine("Enter your name:");
+string userName = Console.ReadLine();
+
+Console.WriteLine($"Hello, {userName}!");
+Conditional Statements
+if Statement: Executes a block of code if a condition is true.
+else Statement: Executes if the condition in the if block is false.
+switch Statement: Tests a variable against multiple cases.
+Example:
+csharp
+Copy code
+int score = 85;
+
+if (score >= 90)
+{
+    Console.WriteLine("Grade: A");
+}
+else if (score >= 75)
+{
+    Console.WriteLine("Grade: B");
+}
+else
+{
+    Console.WriteLine("Grade: C");
+}
+
+// Switch
+char grade = 'B';
+switch (grade)
+{
+    case 'A':
+        Console.WriteLine("Excellent!");
+        break;
+    case 'B':
+        Console.WriteLine("Good job!");
+        break;
+    default:
+        Console.WriteLine("Keep trying!");
+        break;
+}
+Loops
+for Loop: Executes a block of code a specific number of times.
+while Loop: Executes while a condition is true.
+do-while Loop: Executes at least once and then checks the condition.
+foreach Loop: Iterates through collections like arrays or lists.
+Example:
+csharp
+Copy code
+// For Loop
+for (int i = 1; i <= 5; i++)
+{
+    Console.WriteLine($"For Loop: {i}");
+}
+
+// While Loop
+int count = 1;
+while (count <= 3)
+{
+    Console.WriteLine($"While Loop: {count}");
+    count++;
+}
+
+// Do-While Loop
+int number = 0;
+do
+{
+    Console.WriteLine($"Do-While Loop: {number}");
+    number++;
+} while (number < 2);
+
+// Foreach Loop
+string[] fruits = { "Apple", "Banana", "Cherry" };
+foreach (string fruit in fruits)
+{
+    Console.WriteLine($"Fruit: {fruit}");
+}
+Real-Time Example
+Scenario: Develop a basic console-based menu for a shopping cart application.
+
+csharp
+Copy code
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        string[] items = { "Milk", "Bread", "Eggs" };
+        bool exit = false;
+
+        while (!exit)
+        {
+            Console.WriteLine("Menu:");
+            Console.WriteLine("1. View Items");
+            Console.WriteLine("2. Add Item");
+            Console.WriteLine("3. Exit");
+            Console.Write("Enter your choice: ");
+            int choice = int.Parse(Console.ReadLine());
+
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine("Available Items:");
+                    foreach (string item in items)
+                    {
+                        Console.WriteLine(item);
+                    }
+                    break;
+
+                case 2:
+                    Console.Write("Enter new item: ");
+                    string newItem = Console.ReadLine();
+                    Array.Resize(ref items, items.Length + 1);
+                    items[items.Length - 1] = newItem;
+                    Console.WriteLine($"{newItem} added!");
+                    break;
+
+                case 3:
+                    exit = true;
+                    Console.WriteLine("Goodbye!");
+                    break;
+
+                default:
+                    Console.WriteLine("Invalid choice, try again.");
+                    break;
+            }
+        }
+    }
+}
