@@ -1,0 +1,247 @@
+Unit Testing and Test-Driven Development (TDD) in C#
+Unit Testing is the practice of testing individual units of code (such as methods or classes) in isolation to ensure that they behave as expected. Test-Driven Development (TDD) is a development approach in which you write tests before writing the actual implementation. In this approach, tests drive the design and development of the software.
+
+In this section, we will dive into the following topics:
+
+Writing unit tests using frameworks like NUnit or MSTest
+Mocking dependencies using Moq
+Writing testable code and following TDD practices
+1. Writing Unit Tests with NUnit or MSTest
+Unit tests are typically written using a testing framework. NUnit and MSTest are two popular testing frameworks in C#.
+
+1.1. Setting Up NUnit in a Project
+To write unit tests with NUnit, you first need to install the NUnit package and the NUnit3TestAdapter in your test project. You can do this via NuGet.
+
+bash
+Copy code
+Install-Package NUnit
+Install-Package NUnit3TestAdapter
+Install-Package Microsoft.NET.Test.Sdk
+1.2. Writing a Basic NUnit Test
+Let’s say you have a simple Calculator class, and you want to write a unit test to verify the addition functionality.
+
+csharp
+Copy code
+public class Calculator
+{
+    public int Add(int a, int b)
+    {
+        return a + b;
+    }
+}
+You can write a unit test for this method using NUnit:
+
+csharp
+Copy code
+using NUnit.Framework;
+
+[TestFixture]  // Marks the class as containing unit tests
+public class CalculatorTests
+{
+    private Calculator _calculator;
+
+    [SetUp]  // Sets up the necessary context before each test
+    public void SetUp()
+    {
+        _calculator = new Calculator();
+    }
+
+    [Test]  // Marks this method as a unit test
+    public void Add_AddsTwoNumbers_ReturnsCorrectSum()
+    {
+        // Arrange
+        int a = 5;
+        int b = 3;
+
+        // Act
+        int result = _calculator.Add(a, b);
+
+        // Assert
+        Assert.AreEqual(8, result);  // Verify the result
+    }
+}
+Explanation:
+The CalculatorTests class contains unit tests for the Calculator class.
+The [SetUp] attribute initializes the necessary objects before each test.
+The [Test] attribute marks the method as a test.
+The Assert.AreEqual() method checks if the result matches the expected value.
+1.3. Writing a Unit Test with MSTest
+MSTest is the default testing framework for .NET projects. Here’s how you can write the same test using MSTest.
+
+csharp
+Copy code
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+[TestClass]  // Marks the class as containing unit tests
+public class CalculatorTests
+{
+    private Calculator _calculator;
+
+    [TestInitialize]  // Runs before each test
+    public void TestInitialize()
+    {
+        _calculator = new Calculator();
+    }
+
+    [TestMethod]  // Marks this method as a unit test
+    public void Add_AddsTwoNumbers_ReturnsCorrectSum()
+    {
+        // Arrange
+        int a = 5;
+        int b = 3;
+
+        // Act
+        int result = _calculator.Add(a, b);
+
+        // Assert
+        Assert.AreEqual(8, result);  // Verify the result
+    }
+}
+Explanation:
+The [TestClass] attribute is used for the class, and [TestMethod] is used for each individual test method.
+[TestInitialize] is used to set up the context before each test method is run.
+2. Mocking Dependencies with Moq
+In unit tests, it’s often necessary to mock external dependencies (like databases, APIs, or services) to isolate the unit being tested. Moq is a popular library in C# used for mocking.
+
+2.1. Setting Up Moq
+First, install Moq via NuGet:
+
+bash
+Copy code
+Install-Package Moq
+2.2. Mocking Dependencies Example
+Let’s say you have a ProductService that depends on a IProductRepository to fetch data from the database. You want to write a unit test for ProductService without hitting the actual database.
+
+csharp
+Copy code
+public interface IProductRepository
+{
+    Product GetProductById(int id);
+}
+
+public class ProductService
+{
+    private readonly IProductRepository _productRepository;
+
+    public ProductService(IProductRepository productRepository)
+    {
+        _productRepository = productRepository;
+    }
+
+    public string GetProductName(int id)
+    {
+        var product = _productRepository.GetProductById(id);
+        return product?.Name;
+    }
+}
+You can use Moq to mock the IProductRepository dependency in your unit test.
+
+csharp
+Copy code
+using Moq;
+using NUnit.Framework;
+
+[TestFixture]
+public class ProductServiceTests
+{
+    private Mock<IProductRepository> _mockProductRepository;
+    private ProductService _productService;
+
+    [SetUp]
+    public void SetUp()
+    {
+        _mockProductRepository = new Mock<IProductRepository>();
+        _productService = new ProductService(_mockProductRepository.Object);
+    }
+
+    [Test]
+    public void GetProductName_ProductExists_ReturnsProductName()
+    {
+        // Arrange
+        var mockProduct = new Product { Id = 1, Name = "Laptop" };
+        _mockProductRepository.Setup(repo => repo.GetProductById(1)).Returns(mockProduct);
+
+        // Act
+        var result = _productService.GetProductName(1);
+
+        // Assert
+        Assert.AreEqual("Laptop", result);
+    }
+}
+Explanation:
+The Mock<IProductRepository> is used to create a mock object of the IProductRepository interface.
+The Setup() method is used to define the behavior of the mock when the GetProductById() method is called with a specific ID.
+The Object property provides the mocked implementation that is injected into the ProductService.
+3. Writing Testable Code and Following TDD Practices
+Testable code refers to writing code that is easy to test. This involves creating loose coupling between components and ensuring that dependencies can be easily mocked or injected.
+
+3.1. Writing Testable Code
+Separation of Concerns: Break down complex classes into smaller, more focused components. Each class should have one responsibility.
+Dependency Injection: Use dependency injection (DI) to inject dependencies, which makes it easier to mock them in tests.
+Example: Writing Testable Code
+Consider a class that needs to send an email notification after performing an action. Instead of directly creating an instance of the email service inside the class, you inject the dependency:
+
+csharp
+Copy code
+public interface IEmailService
+{
+    void SendEmail(string recipient, string subject, string body);
+}
+
+public class UserService
+{
+    private readonly IEmailService _emailService;
+
+    public UserService(IEmailService emailService)
+    {
+        _emailService = emailService;
+    }
+
+    public void RegisterUser(string username)
+    {
+        // Logic to register the user...
+
+        // Send an email after successful registration
+        _emailService.SendEmail(username, "Welcome", "Thank you for registering!");
+    }
+}
+Explanation: The UserService class is now testable because the email service is injected. You can mock the IEmailService in tests instead of creating a real instance.
+3.2. Following TDD Practices
+Test-Driven Development (TDD) is a software development approach where you write tests before writing the implementation code. The typical TDD cycle is:
+
+Red: Write a failing test for a feature or behavior.
+Green: Write just enough code to pass the test.
+Refactor: Refactor the code for optimization and readability.
+Example: TDD Cycle
+Let’s follow the TDD cycle for adding a method to the Calculator class that multiplies two numbers:
+
+Red: Write the failing test.
+csharp
+Copy code
+[Test]
+public void Multiply_MultipliesTwoNumbers_ReturnsCorrectResult()
+{
+    var calculator = new Calculator();
+
+    int result = calculator.Multiply(2, 3);
+
+    Assert.AreEqual(6, result);  // The test will fail because Multiply() doesn't exist yet
+}
+Green: Write the code to make the test pass.
+csharp
+Copy code
+public class Calculator
+{
+    public int Multiply(int a, int b)
+    {
+        return a * b;
+    }
+}
+Refactor: Refactor the code if necessary.
+In this case, the code is already clean, but you would refactor if needed (e.g., removing duplication, optimizing performance, etc.).
+
+Key Takeaways:
+Unit Testing is the practice of writing tests for individual units of code, and frameworks like NUnit and MSTest help you automate and organize these tests.
+Mocking dependencies (using libraries like Moq) allows you to isolate units of code and test them in isolation, without relying on external systems like databases or APIs.
+Testable Code should follow principles like separation of concerns and dependency injection. This makes it easier to write tests and mock dependencies.
+Test-Driven Development (TDD) helps ensure that the code you write is well-tested and works as expected by writing tests before implementation.
