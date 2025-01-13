@@ -1,0 +1,174 @@
+Working with Databases: CRUD Operations (Create, Read, Update, Delete)
+In any database-driven application, CRUD operations (Create, Read, Update, Delete) are fundamental actions that enable interaction with the database. These operations are used to manipulate and retrieve data from the database.
+
+Let’s break down each operation, explain how to perform them in C#, and provide real-time examples of each.
+
+1. Create Operation (INSERT)
+The Create operation adds new data into a database. In C#, this is usually done by creating an instance of a model class and saving it to the database.
+
+Example: Creating a New Product
+Assume we have an e-commerce platform where products are stored in the database.
+
+csharp
+Copy code
+public class Product
+{
+    public int ProductID { get; set; }
+    public string ProductName { get; set; }
+    public decimal Price { get; set; }
+    public int Stock { get; set; }
+}
+Using Entity Framework Core, we can perform the Create operation by adding a new Product to the database.
+
+csharp
+Copy code
+public void AddProduct(Product product)
+{
+    using (var context = new ApplicationDbContext())
+    {
+        context.Products.Add(product);  // Add the new product
+        context.SaveChanges();         // Save the changes to the database
+    }
+}
+Explanation: The Add() method is used to add a new product to the Products DbSet, and SaveChanges() commits the new data to the database.
+2. Read Operation (SELECT)
+The Read operation is used to retrieve data from the database. In C#, LINQ (Language Integrated Query) is commonly used to query the database.
+
+Example: Fetching Products by Price
+You can use LINQ to fetch products with a price greater than a certain value:
+
+csharp
+Copy code
+public List<Product> GetProductsByPrice(decimal priceThreshold)
+{
+    using (var context = new ApplicationDbContext())
+    {
+        var products = from p in context.Products
+                       where p.Price > priceThreshold
+                       select p;
+                       
+        return products.ToList();  // Execute the query and return the results as a list
+    }
+}
+Explanation: The LINQ query retrieves all products whose price exceeds the priceThreshold parameter. ToList() converts the query results into a list.
+You can also use EF Core's Find() or FirstOrDefault() for single entity retrieval:
+
+csharp
+Copy code
+public Product GetProductById(int productId)
+{
+    using (var context = new ApplicationDbContext())
+    {
+        return context.Products.Find(productId);  // Retrieves product by ID
+    }
+}
+Explanation: Find() retrieves a product by its primary key, in this case, the ProductID.
+3. Update Operation (UPDATE)
+The Update operation is used to modify existing data in the database. In EF Core, the entity is first fetched, modified in memory, and then saved back to the database.
+
+Example: Updating Product Stock
+Suppose you need to update the stock of a product when an order is placed.
+
+csharp
+Copy code
+public void UpdateProductStock(int productId, int newStock)
+{
+    using (var context = new ApplicationDbContext())
+    {
+        var product = context.Products.SingleOrDefault(p => p.ProductID == productId);
+        
+        if (product != null)
+        {
+            product.Stock = newStock;  // Update stock quantity
+            context.SaveChanges();     // Save changes to the database
+        }
+    }
+}
+Explanation: First, the product is fetched using SingleOrDefault(), and then its Stock property is updated. SaveChanges() is used to persist the changes to the database.
+You can also use EF Core's Update() method if you are certain the entity exists and don't need to fetch it beforehand:
+
+csharp
+Copy code
+public void UpdateProduct(Product product)
+{
+    using (var context = new ApplicationDbContext())
+    {
+        context.Products.Update(product);  // Update the product entity
+        context.SaveChanges();             // Save the changes to the database
+    }
+}
+Explanation: Update() is used to mark the entity as modified, and then SaveChanges() commits the update.
+4. Delete Operation (DELETE)
+The Delete operation removes data from the database. In EF Core, the entity to be deleted is retrieved, and then the Remove() method is used to delete it.
+
+Example: Deleting a Product
+Here’s how you can delete a product from the database:
+
+csharp
+Copy code
+public void DeleteProduct(int productId)
+{
+    using (var context = new ApplicationDbContext())
+    {
+        var product = context.Products.SingleOrDefault(p => p.ProductID == productId);
+        
+        if (product != null)
+        {
+            context.Products.Remove(product);  // Remove the product entity
+            context.SaveChanges();             // Commit the deletion to the database
+        }
+    }
+}
+Explanation: The product is fetched by its ProductID, and Remove() is used to delete it from the Products DbSet. SaveChanges() ensures the deletion is committed to the database.
+You can also use EF Core's RemoveRange() method to delete multiple entities at once:
+
+csharp
+Copy code
+public void DeleteProducts(List<int> productIds)
+{
+    using (var context = new ApplicationDbContext())
+    {
+        var products = context.Products.Where(p => productIds.Contains(p.ProductID)).ToList();
+        context.Products.RemoveRange(products);  // Remove multiple products
+        context.SaveChanges();                   // Commit the changes
+    }
+}
+Explanation: RemoveRange() is used to delete multiple products at once based on a list of product IDs.
+Real-Time Example of CRUD Operations
+Let’s say you’re building an Inventory Management System for a warehouse. The database stores Product details (name, price, stock), and the warehouse manager needs to:
+
+Add new products to the inventory (Create).
+View products in the inventory (Read).
+Update the stock level when a new shipment arrives (Update).
+Remove products from the inventory when they are discontinued (Delete).
+1. Create:
+The warehouse manager adds a new product to the inventory:
+
+csharp
+Copy code
+Product newProduct = new Product { ProductName = "Laptop", Price = 50000, Stock = 100 };
+AddProduct(newProduct);  // Add the new product to the database
+2. Read:
+The warehouse manager views all products with stock greater than 50:
+
+csharp
+Copy code
+List<Product> availableProducts = GetProductsByPrice(50000);
+3. Update:
+A shipment of 50 more laptops arrives, so the warehouse manager updates the stock:
+
+csharp
+Copy code
+UpdateProductStock(1, 150);  // Update the stock of the product with ID 1
+4. Delete:
+The warehouse manager decides to discontinue a product, so they delete it:
+
+csharp
+Copy code
+DeleteProduct(3);  // Delete the product with ID 3 from the inventory
+Key Takeaways:
+CRUD Operations (Create, Read, Update, Delete) are the basic actions for interacting with a database.
+In C#, these operations are commonly performed using Entity Framework (EF) Core.
+Each CRUD operation corresponds to a specific method: Add(), Find(), Update(), and Remove() for managing data in the database.
+Real-world applications like inventory management, customer management, and e-commerce platforms rely heavily on these CRUD operations to manage their databases efficiently.
+By using these operations, you can efficiently manage data in your database, whether it's adding new records, updating existing ones, reading data, or deleting unnecessary entries.
