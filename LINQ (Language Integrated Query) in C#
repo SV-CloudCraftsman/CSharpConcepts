@@ -1,0 +1,199 @@
+LINQ (Language Integrated Query) in C#
+LINQ (Language Integrated Query) provides a way to query data from various data sources (collections, databases, XML, etc.) using a unified syntax. It's type-safe and integrates query capabilities directly into C#.
+
+1. LINQ Queries
+Key Operations:
+
+Filtering: Selecting elements based on a condition.
+Projection: Transforming data from one form to another.
+Sorting: Ordering data.
+Example: Filtering, Projecting, and Sorting Data
+
+csharp
+Copy code
+using System;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        int[] numbers = { 3, 7, 1, 9, 2, 8 };
+
+        // LINQ query
+        var sortedSquares = numbers
+            .Where(n => n > 3)           // Filter: numbers greater than 3
+            .OrderBy(n => n)            // Sort: ascending order
+            .Select(n => n * n);        // Project: square the numbers
+
+        Console.WriteLine("Filtered, sorted squares:");
+        foreach (var square in sortedSquares)
+        {
+            Console.WriteLine(square);
+        }
+    }
+}
+Output:
+
+Copy code
+16
+49
+64
+81
+2. LINQ with Collections
+LINQ can be used with collections such as arrays, lists, and dictionaries.
+
+Example: LINQ with a List
+
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        List<string> names = new List<string> { "Alice", "Bob", "Charlie", "David", "Eve" };
+
+        // LINQ query to find names starting with 'A' or 'D'
+        var filteredNames = names.Where(name => name.StartsWith("A") || name.StartsWith("D"));
+
+        Console.WriteLine("Filtered Names:");
+        foreach (var name in filteredNames)
+        {
+            Console.WriteLine(name);
+        }
+    }
+}
+Output:
+
+Copy code
+Alice
+David
+Example: LINQ with a Dictionary
+
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        Dictionary<int, string> employees = new Dictionary<int, string>
+        {
+            { 101, "Alice" },
+            { 102, "Bob" },
+            { 103, "Charlie" }
+        };
+
+        // LINQ query to get employees with IDs greater than 101
+        var result = employees.Where(e => e.Key > 101);
+
+        Console.WriteLine("Filtered Employees:");
+        foreach (var employee in result)
+        {
+            Console.WriteLine($"ID: {employee.Key}, Name: {employee.Value}");
+        }
+    }
+}
+3. Lambda Expressions and Anonymous Methods
+Lambda expressions simplify writing inline functions used with LINQ.
+
+Example: Using Lambda with LINQ
+
+csharp
+Copy code
+using System;
+using System.Linq;
+
+class Program
+{
+    static void Main()
+    {
+        int[] numbers = { 5, 10, 15, 20, 25 };
+
+        // Using lambda expression to filter even numbers
+        var evenNumbers = numbers.Where(n => n % 2 == 0);
+
+        Console.WriteLine("Even Numbers:");
+        foreach (var num in evenNumbers)
+        {
+            Console.WriteLine(num);
+        }
+    }
+}
+Output:
+
+Copy code
+10
+20
+4. LINQ to SQL / Entity Framework Core
+LINQ can be extended to query databases using LINQ to SQL or Entity Framework Core.
+
+Example: LINQ with Entity Framework Core
+
+csharp
+Copy code
+using System;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
+
+public class Employee
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public decimal Salary { get; set; }
+}
+
+public class AppDbContext : DbContext
+{
+    public DbSet<Employee> Employees { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseInMemoryDatabase("EmployeesDb");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        using (var context = new AppDbContext())
+        {
+            // Adding some employees
+            context.Employees.AddRange(
+                new Employee { Name = "Alice", Salary = 50000 },
+                new Employee { Name = "Bob", Salary = 60000 },
+                new Employee { Name = "Charlie", Salary = 70000 }
+            );
+            context.SaveChanges();
+
+            // LINQ to query employees with salary greater than 55,000
+            var highEarners = context.Employees
+                .Where(e => e.Salary > 55000)
+                .OrderBy(e => e.Name);
+
+            Console.WriteLine("High Earning Employees:");
+            foreach (var employee in highEarners)
+            {
+                Console.WriteLine($"{employee.Name} - {employee.Salary}");
+            }
+        }
+    }
+}
+Output:
+
+Copy code
+Bob - 60000
+Charlie - 70000
+Key Benefits of LINQ
+Unified Syntax: Same syntax for querying different data sources.
+Readability: Makes code more readable and concise.
+Compile-Time Checking: Ensures queries are type-safe.
+Integration: Integrated seamlessly into C#.
