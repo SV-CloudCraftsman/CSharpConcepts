@@ -1,0 +1,306 @@
+Design Patterns in C#
+Design patterns are reusable solutions to common software design problems. They provide templates to structure code in a way that is efficient, scalable, and maintainable. Below are some commonly used design patterns in C#, along with real-world examples and explanations.
+
+1. Singleton Pattern
+Definition:
+Ensures that a class has only one instance and provides a global point of access to it.
+
+Use Case:
+Managing a single configuration manager or logging service.
+
+Example:
+
+csharp
+Copy code
+public class Singleton
+{
+    private static Singleton _instance;
+    private static readonly object _lock = new object();
+
+    // Private constructor to prevent instantiation
+    private Singleton() { }
+
+    public static Singleton Instance
+    {
+        get
+        {
+            lock (_lock)
+            {
+                if (_instance == null)
+                {
+                    _instance = new Singleton();
+                }
+            }
+            return _instance;
+        }
+    }
+
+    public void Log(string message)
+    {
+        Console.WriteLine(message);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Singleton logger = Singleton.Instance;
+        logger.Log("This is a singleton logger.");
+    }
+}
+2. Factory Pattern
+Definition:
+Provides a way to create objects without specifying the exact class of the object being created.
+
+Use Case:
+Creating objects based on user input, configuration, or other runtime information.
+
+Example:
+
+csharp
+Copy code
+public interface IVehicle
+{
+    void Drive();
+}
+
+public class Car : IVehicle
+{
+    public void Drive() => Console.WriteLine("Driving a car.");
+}
+
+public class Bike : IVehicle
+{
+    public void Drive() => Console.WriteLine("Riding a bike.");
+}
+
+public class VehicleFactory
+{
+    public static IVehicle GetVehicle(string vehicleType)
+    {
+        return vehicleType.ToLower() switch
+        {
+            "car" => new Car(),
+            "bike" => new Bike(),
+            _ => throw new ArgumentException("Invalid vehicle type.")
+        };
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        IVehicle vehicle = VehicleFactory.GetVehicle("car");
+        vehicle.Drive();
+    }
+}
+3. Strategy Pattern
+Definition:
+Defines a family of algorithms, encapsulates each one, and makes them interchangeable.
+
+Use Case:
+Switching between different sorting algorithms or payment strategies.
+
+Example:
+
+csharp
+Copy code
+public interface IPaymentStrategy
+{
+    void Pay(int amount);
+}
+
+public class CreditCardPayment : IPaymentStrategy
+{
+    public void Pay(int amount) => Console.WriteLine($"Paid {amount} using Credit Card.");
+}
+
+public class PayPalPayment : IPaymentStrategy
+{
+    public void Pay(int amount) => Console.WriteLine($"Paid {amount} using PayPal.");
+}
+
+public class PaymentContext
+{
+    private readonly IPaymentStrategy _paymentStrategy;
+
+    public PaymentContext(IPaymentStrategy paymentStrategy)
+    {
+        _paymentStrategy = paymentStrategy;
+    }
+
+    public void ExecutePayment(int amount)
+    {
+        _paymentStrategy.Pay(amount);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        IPaymentStrategy paymentMethod = new PayPalPayment();
+        PaymentContext context = new PaymentContext(paymentMethod);
+        context.ExecutePayment(100);
+    }
+}
+4. Observer Pattern
+Definition:
+Defines a one-to-many dependency between objects, so that when one object changes state, all its dependents are notified.
+
+Use Case:
+Implementing event listeners or subscription systems.
+
+Example:
+
+csharp
+Copy code
+public class Subject
+{
+    private readonly List<IObserver> _observers = new();
+
+    public void Attach(IObserver observer) => _observers.Add(observer);
+    public void Detach(IObserver observer) => _observers.Remove(observer);
+    public void Notify()
+    {
+        foreach (var observer in _observers)
+        {
+            observer.Update();
+        }
+    }
+}
+
+public interface IObserver
+{
+    void Update();
+}
+
+public class ConcreteObserver : IObserver
+{
+    private readonly string _name;
+    public ConcreteObserver(string name) => _name = name;
+
+    public void Update() => Console.WriteLine($"{_name} has been notified.");
+}
+
+class Program
+{
+    static void Main()
+    {
+        Subject subject = new Subject();
+
+        IObserver observer1 = new ConcreteObserver("Observer 1");
+        IObserver observer2 = new ConcreteObserver("Observer 2");
+
+        subject.Attach(observer1);
+        subject.Attach(observer2);
+
+        subject.Notify();
+    }
+}
+5. Builder Pattern
+Definition:
+Constructs a complex object step by step and provides a clear separation between the representation and the construction.
+
+Use Case:
+Creating complex objects like reports or documents.
+
+Example:
+
+csharp
+Copy code
+public class House
+{
+    public string Walls { get; set; }
+    public string Roof { get; set; }
+    public string Doors { get; set; }
+
+    public override string ToString() => $"Walls: {Walls}, Roof: {Roof}, Doors: {Doors}";
+}
+
+public interface IHouseBuilder
+{
+    void BuildWalls();
+    void BuildRoof();
+    void BuildDoors();
+    House GetHouse();
+}
+
+public class ConcreteHouseBuilder : IHouseBuilder
+{
+    private readonly House _house = new();
+
+    public void BuildWalls() => _house.Walls = "Concrete Walls";
+    public void BuildRoof() => _house.Roof = "Concrete Roof";
+    public void BuildDoors() => _house.Doors = "Wooden Doors";
+
+    public House GetHouse() => _house;
+}
+
+class Program
+{
+    static void Main()
+    {
+        IHouseBuilder builder = new ConcreteHouseBuilder();
+        builder.BuildWalls();
+        builder.BuildRoof();
+        builder.BuildDoors();
+        
+        House house = builder.GetHouse();
+        Console.WriteLine(house);
+    }
+}
+6. Decorator Pattern
+Definition:
+Allows behavior to be added to an object dynamically, without modifying its structure.
+
+Use Case:
+Adding features to UI components like buttons or text boxes.
+
+Example:
+
+csharp
+Copy code
+public interface IComponent
+{
+    void Execute();
+}
+
+public class ConcreteComponent : IComponent
+{
+    public void Execute() => Console.WriteLine("Executing core functionality.");
+}
+
+public class Decorator : IComponent
+{
+    private readonly IComponent _component;
+
+    public Decorator(IComponent component) => _component = component;
+
+    public void Execute()
+    {
+        _component.Execute();
+        Console.WriteLine("Adding additional functionality.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        IComponent component = new ConcreteComponent();
+        IComponent decoratedComponent = new Decorator(component);
+
+        decoratedComponent.Execute();
+    }
+}
+Summary
+Singleton: Ensure a single instance.
+Factory: Create objects without exposing the instantiation logic.
+Strategy: Swap algorithms dynamically.
+Observer: Notify dependent objects of changes.
+Builder: Construct complex objects step-by-step.
+Decorator: Dynamically add behavior to objects.
+These design patterns, when applied appropriately, help build robust, scalable, and maintainable applications.
