@@ -1,0 +1,170 @@
+Partial Classes in C#
+Definition:
+A partial class in C# allows a single class to be split across multiple files. The partial keyword is used to indicate that the class, interface, or struct is defined in multiple files. When compiled, the compiler combines all parts into a single entity.
+
+Why Use Partial Classes?
+Separation of Concerns: Divide large classes into smaller, logically related sections.
+Code Organization: Maintain better readability and manageability of code in large projects.
+Collaboration: Enable multiple developers to work on different parts of the same class simultaneously.
+Generated Code: Useful in scenarios where part of the code is auto-generated (e.g., by tools like Entity Framework or WPF).
+Syntax:
+File 1 (File1.cs):
+
+csharp
+Copy code
+public partial class MyClass
+{
+    public void Method1()
+    {
+        Console.WriteLine("This is Method1.");
+    }
+}
+File 2 (File2.cs):
+
+csharp
+Copy code
+public partial class MyClass
+{
+    public void Method2()
+    {
+        Console.WriteLine("This is Method2.");
+    }
+}
+Combining: At runtime, the compiler merges File1.cs and File2.cs into a single class MyClass that contains both Method1 and Method2.
+
+Real-Time Example 1: Splitting a Class for Better Organization
+File 1: Student.Part1.cs
+
+csharp
+Copy code
+public partial class Student
+{
+    public string Name { get; set; }
+    public int Age { get; set; }
+}
+File 2: Student.Part2.cs
+
+csharp
+Copy code
+public partial class Student
+{
+    public void DisplayInfo()
+    {
+        Console.WriteLine($"Name: {Name}, Age: {Age}");
+    }
+}
+Main Program:
+
+csharp
+Copy code
+class Program
+{
+    static void Main()
+    {
+        Student student = new Student { Name = "John", Age = 20 };
+        student.DisplayInfo();
+    }
+}
+Output:
+
+yaml
+Copy code
+Name: John, Age: 20
+Real-Time Example 2: Using Partial Classes with Auto-Generated Code
+Scenario: Auto-generated code for an Entity Framework model.
+
+File 1: Customer.Designer.cs (Generated Code):
+
+csharp
+Copy code
+public partial class Customer
+{
+    public int CustomerId { get; set; }
+    public string CustomerName { get; set; }
+}
+File 2: Customer.Custom.cs (Custom Code):
+
+csharp
+Copy code
+public partial class Customer
+{
+    public void PrintDetails()
+    {
+        Console.WriteLine($"Customer ID: {CustomerId}, Name: {CustomerName}");
+    }
+}
+Main Program:
+
+csharp
+Copy code
+class Program
+{
+    static void Main()
+    {
+        Customer customer = new Customer { CustomerId = 1, CustomerName = "Alice" };
+        customer.PrintDetails();
+    }
+}
+Output:
+
+yaml
+Copy code
+Customer ID: 1, Name: Alice
+Key Features of Partial Classes:
+All Parts Must Use partial Keyword: All files contributing to the partial class must include the partial keyword.
+Namespace Consistency: All parts must be in the same namespace.
+Single Assembly: All parts are compiled into the same assembly.
+Combining Attributes: Attributes applied to any part of the partial class are combined.
+Advanced Example: Combining Constructors
+File 1: Employee.Part1.cs
+
+csharp
+Copy code
+public partial class Employee
+{
+    public string Name { get; set; }
+    public string Position { get; set; }
+
+    public Employee(string name)
+    {
+        Name = name;
+    }
+}
+File 2: Employee.Part2.cs
+
+csharp
+Copy code
+public partial class Employee
+{
+    public Employee(string name, string position) : this(name)
+    {
+        Position = position;
+    }
+
+    public void DisplayInfo()
+    {
+        Console.WriteLine($"Name: {Name}, Position: {Position}");
+    }
+}
+Main Program:
+
+csharp
+Copy code
+class Program
+{
+    static void Main()
+    {
+        Employee emp = new Employee("David", "Manager");
+        emp.DisplayInfo();
+    }
+}
+Output:
+
+yaml
+Copy code
+Name: David, Position: Manager
+When to Use Partial Classes:
+Large Classes: Break down large, complex classes into manageable sections.
+Tool-Generated Code: Combine auto-generated code with user-defined customizations.
+Team Development: Enable multiple developers to work on different parts of the same class.
+Partial classes improve code maintainability, especially in large projects, and provide a clear separation of concerns without compromising the functionality or structure of the program.
