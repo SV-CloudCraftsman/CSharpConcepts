@@ -1,0 +1,211 @@
+C# Arrays and Collections
+C# provides various ways to store and manipulate collections of data. These include arrays and advanced collection types like lists, dictionaries, queues, and stacks.
+
+1. Arrays
+An array is a collection of elements of the same type, stored in contiguous memory locations.
+
+Single-Dimensional Arrays
+Definition: A linear array with elements stored sequentially.
+Example:
+csharp
+Copy code
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Declare and initialize an array
+        int[] numbers = { 10, 20, 30, 40, 50 };
+
+        // Access elements using an index
+        Console.WriteLine($"First element: {numbers[0]}");
+
+        // Iterate over the array
+        foreach (int number in numbers)
+        {
+            Console.WriteLine(number);
+        }
+    }
+}
+Multi-Dimensional Arrays
+Definition: Arrays with more than one dimension, such as 2D arrays.
+Example:
+csharp
+Copy code
+using System;
+
+class Program
+{
+    static void Main()
+    {
+        // Declare a 2D array
+        int[,] matrix = {
+            { 1, 2, 3 },
+            { 4, 5, 6 },
+            { 7, 8, 9 }
+        };
+
+        // Access and print elements
+        Console.WriteLine($"Element at (0,1): {matrix[0, 1]}");
+
+        // Iterate over the 2D array
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                Console.Write($"{matrix[i, j]} ");
+            }
+            Console.WriteLine();
+        }
+    }
+}
+2. Collections
+Collections in C# provide more flexible ways to store and manipulate data compared to arrays.
+
+Lists
+Definition: A dynamic array that can grow or shrink in size.
+Example:
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Declare and initialize a list
+        List<string> fruits = new List<string> { "Apple", "Banana", "Cherry" };
+
+        // Add and remove elements
+        fruits.Add("Mango");
+        fruits.Remove("Banana");
+
+        // Iterate over the list
+        foreach (string fruit in fruits)
+        {
+            Console.WriteLine(fruit);
+        }
+    }
+}
+Dictionaries
+Definition: A collection of key-value pairs.
+Example:
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Declare and initialize a dictionary
+        Dictionary<int, string> employees = new Dictionary<int, string>
+        {
+            { 1, "Alice" },
+            { 2, "Bob" },
+            { 3, "Charlie" }
+        };
+
+        // Access elements by key
+        Console.WriteLine($"Employee with ID 2: {employees[2]}");
+
+        // Iterate over the dictionary
+        foreach (var entry in employees)
+        {
+            Console.WriteLine($"ID: {entry.Key}, Name: {entry.Value}");
+        }
+    }
+}
+Queues
+Definition: A first-in-first-out (FIFO) collection.
+Example:
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Declare and initialize a queue
+        Queue<string> customers = new Queue<string>();
+        customers.Enqueue("Customer1");
+        customers.Enqueue("Customer2");
+        customers.Enqueue("Customer3");
+
+        // Process the queue
+        while (customers.Count > 0)
+        {
+            Console.WriteLine($"Serving: {customers.Dequeue()}");
+        }
+    }
+}
+Stacks
+Definition: A last-in-first-out (LIFO) collection.
+Example:
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        // Declare and initialize a stack
+        Stack<string> books = new Stack<string>();
+        books.Push("Book1");
+        books.Push("Book2");
+        books.Push("Book3");
+
+        // Process the stack
+        while (books.Count > 0)
+        {
+            Console.WriteLine($"Reading: {books.Pop()}");
+        }
+    }
+}
+3. Iterating Over Collections
+You can iterate over collections using loops like for, foreach, or while.
+
+Example: Iterating Over a List
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+
+class Program
+{
+    static void Main()
+    {
+        List<int> numbers = new List<int> { 10, 20, 30, 40, 50 };
+
+        // Using foreach loop
+        foreach (int number in numbers)
+        {
+            Console.WriteLine(number);
+        }
+
+        // Using for loop
+        for (int i = 0; i < numbers.Count; i++)
+        {
+            Console.WriteLine(numbers[i]);
+        }
+    }
+}
+Real-Time Applications
+Shopping Cart System (List & Dictionary)
+
+Use a List to store items in a shopping cart.
+Use a Dictionary to map item IDs to details like price and description.
+Task Management (Queue)
+
+Use a Queue to manage tasks in a job processing system.
+Undo Feature in Applications (Stack)
+
+Use a Stack to store the history of operations for an undo feature.
+These concepts and examples form the foundation for working with data structures in real-world C# applications like e-commerce platforms, ticket booking systems, and more.
