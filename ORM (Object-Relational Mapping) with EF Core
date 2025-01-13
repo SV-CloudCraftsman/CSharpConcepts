@@ -1,0 +1,224 @@
+Working with Databases: ORM (Object-Relational Mapping) with EF Core
+ORM (Object-Relational Mapping) is a programming technique used to convert data between incompatible systems — in this case, between object-oriented programming (OOP) and relational databases. In simple terms, ORM allows you to interact with a relational database using objects and classes in your code, rather than writing raw SQL queries.
+
+Entity Framework (EF) Core is a modern ORM framework from Microsoft that provides a way to interact with databases in an object-oriented manner in C#. It simplifies database operations by mapping your C# classes to database tables, allowing you to work with data as objects instead of writing raw SQL queries.
+
+1. What is Entity Framework (EF) Core?
+EF Core is a lightweight, extensible, open-source version of the Entity Framework. It is cross-platform and works with .NET Core as well as .NET Framework. EF Core provides functionality for:
+
+Mapping C# objects to database tables.
+Performing CRUD operations.
+Running LINQ queries that are automatically translated to SQL.
+Automatic migrations for schema changes.
+Handling complex relationships (One-to-Many, Many-to-Many, etc.)
+EF Core allows developers to focus on writing code to manipulate objects, and the framework handles the underlying database operations.
+
+2. Key Features of EF Core ORM:
+Data Mapping: EF Core maps C# classes (entities) to database tables.
+LINQ Support: It allows you to use LINQ queries to retrieve data.
+Database Provider Support: EF Core supports various database providers (SQL Server, SQLite, PostgreSQL, etc.).
+Migrations: It allows for automatic schema migrations to keep your database up to date with your C# models.
+Change Tracking: EF Core tracks changes to objects so it can persist changes back to the database.
+3. Setting Up Entity Framework Core in a C# Project:
+Here’s how you set up and use EF Core to interact with a relational database:
+
+Step 1: Install EF Core Packages
+Use NuGet to install the necessary EF Core packages for your database provider.
+
+For example, for SQL Server:
+
+bash
+Copy code
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+Step 2: Create Your Model (C# Class)
+Each class in C# will correspond to a table in the database. Define a class with properties that will map to the columns in the database.
+
+csharp
+Copy code
+public class Product
+{
+    public int ProductID { get; set; }
+    public string ProductName { get; set; }
+    public decimal Price { get; set; }
+    public int Stock { get; set; }
+}
+Step 3: Define the DbContext Class
+The DbContext is the main class that allows interaction with the database. It contains a DbSet<TEntity> for each entity type in your model.
+
+csharp
+Copy code
+public class ApplicationDbContext : DbContext
+{
+    public DbSet<Product> Products { get; set; }
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options) { }
+}
+Step 4: Configure the Connection String
+In appsettings.json, you will typically store the database connection string:
+
+json
+Copy code
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=myServer;Database=myDb;Trusted_Connection=True;"
+  }
+}
+Then, in Startup.cs or Program.cs, configure the DbContext to use SQL Server (or another provider):
+
+csharp
+Copy code
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services)
+    {
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+    }
+}
+4. Basic Operations with EF Core:
+Once EF Core is set up, you can easily perform database operations like creating, reading, updating, and deleting (CRUD) records.
+
+Create (Insert) Data:
+You can add new data to the database using the Add method:
+
+csharp
+Copy code
+public void AddProduct(ApplicationDbContext context)
+{
+    var newProduct = new Product
+    {
+        ProductName = "Laptop",
+        Price = 1200.99m,
+        Stock = 10
+    };
+
+    context.Products.Add(newProduct);
+    context.SaveChanges();  // Commit changes to the database
+}
+Explanation: Here, a new product is created and added to the Products DbSet. The SaveChanges() method commits the changes to the database.
+Read Data:
+You can retrieve data using LINQ queries or methods like Find, FirstOrDefault, Where, etc.
+
+csharp
+Copy code
+public Product GetProductById(ApplicationDbContext context, int productId)
+{
+    return context.Products.FirstOrDefault(p => p.ProductID == productId);
+}
+Explanation: This method retrieves a product by its ID using LINQ. FirstOrDefault returns the first matching product or null if not found.
+Update Data:
+To update an existing record, you can retrieve it, modify its properties, and then call SaveChanges().
+
+csharp
+Copy code
+public void UpdateProductPrice(ApplicationDbContext context, int productId, decimal newPrice)
+{
+    var product = context.Products.Find(productId);
+    if (product != null)
+    {
+        product.Price = newPrice;
+        context.SaveChanges();
+    }
+}
+Explanation: The product is retrieved by its ProductID, and if found, its price is updated and saved to the database.
+Delete Data:
+You can delete records using the Remove method.
+
+csharp
+Copy code
+public void DeleteProduct(ApplicationDbContext context, int productId)
+{
+    var product = context.Products.Find(productId);
+    if (product != null)
+    {
+        context.Products.Remove(product);
+        context.SaveChanges();
+    }
+}
+Explanation: The product is found by ProductID, removed from the Products DbSet, and changes are saved to the database.
+5. Advanced Features of EF Core:
+Working with Relationships:
+EF Core supports relationships between entities, such as One-to-Many and Many-to-Many.
+
+One-to-Many Relationship: In this case, a Customer can have many Orders, but each Order belongs to one Customer.
+
+csharp
+Copy code
+public class Customer
+{
+    public int CustomerID { get; set; }
+    public string CustomerName { get; set; }
+    public ICollection<Order> Orders { get; set; }  // One-to-Many relationship
+}
+
+public class Order
+{
+    public int OrderID { get; set; }
+    public DateTime OrderDate { get; set; }
+    public int CustomerID { get; set; }
+    public Customer Customer { get; set; }  // Foreign key reference
+}
+Many-to-Many Relationship: In this case, Products can be part of many Orders, and each Order can contain many Products.
+
+csharp
+Copy code
+public class Order
+{
+    public int OrderID { get; set; }
+    public DateTime OrderDate { get; set; }
+    public ICollection<Product> Products { get; set; }  // Many-to-Many relationship
+}
+Explanation: EF Core uses navigation properties to establish these relationships. In a One-to-Many relationship, a Customer has many Orders, and each Order has a reference to one Customer. In a Many-to-Many relationship, both Order and Product entities are related to each other.
+Migrations in EF Core:
+EF Core provides migrations to manage schema changes in the database as your application evolves.
+
+Creating a Migration: When you add or modify your models, you can create a migration to reflect these changes in the database.
+
+bash
+Copy code
+dotnet ef migrations add AddProductTable
+Applying Migrations:
+
+Once migrations are created, apply them to the database using:
+
+bash
+Copy code
+dotnet ef database update
+This will apply any pending migrations to update the database schema to match your models.
+
+6. Querying with LINQ and EF Core:
+EF Core allows you to use LINQ (Language Integrated Query) to perform complex queries that are automatically converted to SQL.
+
+Example of LINQ Query:
+csharp
+Copy code
+public List<Product> GetProductsByPrice(ApplicationDbContext context, decimal minPrice)
+{
+    return context.Products.Where(p => p.Price >= minPrice).ToList();
+}
+Explanation: This LINQ query retrieves all products where the price is greater than or equal to the specified minimum price. EF Core automatically converts this LINQ query into the corresponding SQL.
+Example of Grouping with LINQ:
+csharp
+Copy code
+public var ProductGroup = context.Products
+    .GroupBy(p => p.Category)
+    .Select(g => new { Category = g.Key, Count = g.Count() })
+    .ToList();
+Explanation: This query groups products by Category and counts how many products exist in each category.
+7. Real-Time Example: E-commerce Application
+Let’s say you are building an E-commerce Application where you need to manage Products, Orders, and Customers.
+
+Products: Each product has a name, description, price, and stock count.
+Orders: Each order contains products and is associated with a customer.
+Customers: Each customer has basic contact information and a list of orders they have placed.
+EF Core allows you to perform CRUD operations for these entities, retrieve products by price, count orders per customer, and manage database relationships between customers and their orders easily.
+
+Key Takeaways:
+ORM Concept: EF Core is an ORM that allows you to work with databases using C# objects instead of SQL queries.
+Data Mapping: EF Core automatically maps C# classes to database tables, making it easier to interact with databases.
+CRUD Operations: EF Core simplifies performing CRUD operations by using LINQ queries instead of writing raw SQL.
+Migrations: EF Core supports migrations, which help in evolving your database schema as your application changes.
+Real-Time Application: EF Core is ideal for building applications with complex data models and relationships, such as e-commerce systems, without writing much SQL.
+EF Core abstracts away the complexities of working with databases, making it a great tool for building data-driven applications in C#.
