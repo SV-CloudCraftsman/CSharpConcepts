@@ -1,0 +1,209 @@
+Basic Object-Oriented Programming (OOP) in C#
+Object-Oriented Programming (OOP) is a programming paradigm based on the concept of objects. In C#, OOP revolves around classes, objects, encapsulation, inheritance, and polymorphism. Here, we’ll focus on the fundamentals: classes and objects, fields, properties, methods, constructors, access modifiers, static members, and encapsulation.
+
+1. Classes and Objects
+Class: A blueprint for creating objects, containing fields, methods, properties, etc.
+Object: An instance of a class, representing a specific entity.
+Example
+csharp
+Copy code
+using System;
+
+class Car
+{
+    // Fields
+    public string Make;
+    public string Model;
+
+    // Method
+    public void DisplayInfo()
+    {
+        Console.WriteLine($"Car: {Make} {Model}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Creating an object
+        Car car1 = new Car();
+        car1.Make = "Toyota";
+        car1.Model = "Corolla";
+        car1.DisplayInfo();
+    }
+}
+2. Fields, Properties, Methods, and Constructors
+Fields
+Variables declared in a class to store data.
+Properties
+Encapsulate fields and provide controlled access.
+Use { get; set; } to define properties.
+Constructors
+Special methods to initialize an object.
+Same name as the class and no return type.
+Example
+csharp
+Copy code
+using System;
+
+class Person
+{
+    // Field (private)
+    private string name;
+
+    // Property
+    public string Name
+    {
+        get { return name; }
+        set { name = value; }
+    }
+
+    // Constructor
+    public Person(string personName)
+    {
+        name = personName;
+    }
+
+    // Method
+    public void Greet()
+    {
+        Console.WriteLine($"Hello, {Name}!");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Person person = new Person("Alice");
+        person.Greet();
+    }
+}
+3. Access Modifiers
+Public: Accessible from anywhere.
+Private: Accessible only within the class.
+Protected: Accessible within the class and its derived classes.
+Internal: Accessible within the same assembly.
+Example
+csharp
+Copy code
+class BankAccount
+{
+    private double balance; // Private field
+
+    public void Deposit(double amount) // Public method
+    {
+        balance += amount;
+    }
+
+    public double GetBalance()
+    {
+        return balance;
+    }
+}
+4. Static Members
+Static Fields/Methods: Belong to the class, not an instance.
+Accessed using the class name.
+Example
+csharp
+Copy code
+class Calculator
+{
+    public static int Add(int a, int b)
+    {
+        return a + b;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        int result = Calculator.Add(5, 10); // No need to create an object
+        Console.WriteLine($"Result: {result}");
+    }
+}
+5. Encapsulation (Getter/Setter Methods)
+Encapsulation hides the implementation details and provides a public interface.
+
+Example
+csharp
+Copy code
+class Employee
+{
+    private int salary; // Private field
+
+    // Property with validation
+    public int Salary
+    {
+        get { return salary; }
+        set
+        {
+            if (value >= 0)
+                salary = value;
+            else
+                Console.WriteLine("Salary cannot be negative.");
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Employee emp = new Employee();
+        emp.Salary = 5000; // Setter
+        Console.WriteLine($"Salary: {emp.Salary}"); // Getter
+    }
+}
+Real-Time Applications of OOP Concepts
+E-Commerce Application
+
+Class: Product
+Fields: ProductID, Price
+Methods: CalculateDiscount(), DisplayDetails()
+Example:
+csharp
+Copy code
+class Product
+{
+    public int ProductID { get; set; }
+    public double Price { get; set; }
+
+    public double CalculateDiscount(double percentage)
+    {
+        return Price - (Price * percentage / 100);
+    }
+}
+Banking System
+
+Class: BankAccount
+Fields: AccountNumber, Balance
+Methods: Deposit(), Withdraw()
+Example:
+csharp
+Copy code
+class BankAccount
+{
+    public string AccountNumber { get; set; }
+    private double balance;
+
+    public void Deposit(double amount)
+    {
+        balance += amount;
+    }
+
+    public double GetBalance()
+    {
+        return balance;
+    }
+}
+Static Utility Class
+
+A MathHelper class with static methods like FindMax() or CalculateAverage().
+Best Practices
+Use Properties for Data Access: Avoid direct field access.
+Use Access Modifiers Thoughtfully: Keep fields private and expose them via public properties or methods.
+Encapsulation for Validation: Use encapsulation to validate inputs.
+By understanding these basic OOP concepts, you'll lay a strong foundation for building robust, maintainable, and scalable C# applications.
