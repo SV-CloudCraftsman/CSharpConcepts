@@ -1,0 +1,252 @@
+Inheritance and Polymorphism in C#
+Inheritance and polymorphism are core concepts of Object-Oriented Programming (OOP) in C#. They enable code reuse, modularity, and flexibility.
+
+1. Inheritance
+Inheritance allows a class (derived/child class) to inherit members (fields, properties, and methods) from another class (base/parent class).
+
+Key Points
+Promotes code reuse.
+A class can inherit only from one base class (single inheritance).
+Use the : symbol to specify inheritance.
+Example: Base and Derived Classes
+csharp
+Copy code
+using System;
+
+class Animal  // Base class
+{
+    public string Name { get; set; }
+
+    public void Eat()
+    {
+        Console.WriteLine($"{Name} is eating.");
+    }
+}
+
+class Dog : Animal  // Derived class
+{
+    public void Bark()
+    {
+        Console.WriteLine($"{Name} is barking.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Dog myDog = new Dog { Name = "Buddy" };
+        myDog.Eat();  // Inherited method
+        myDog.Bark(); // Method of Dog class
+    }
+}
+2. Polymorphism
+Polymorphism allows methods to have different behaviors based on the object’s runtime type.
+
+Types of Polymorphism
+Compile-time Polymorphism: Achieved using method overloading.
+Run-time Polymorphism: Achieved using method overriding.
+Method Overriding and Hiding
+Method Overriding: Allows a derived class to modify the behavior of a method defined in the base class.
+Method Hiding: Hides a base class method using the new keyword.
+Example: Method Overriding
+csharp
+Copy code
+using System;
+
+class Animal
+{
+    public virtual void Speak()
+    {
+        Console.WriteLine("The animal makes a sound.");
+    }
+}
+
+class Dog : Animal
+{
+    public override void Speak()
+    {
+        Console.WriteLine("The dog barks.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Animal myAnimal = new Animal();
+        myAnimal.Speak();
+
+        Animal myDog = new Dog(); // Run-time polymorphism
+        myDog.Speak();
+    }
+}
+Example: Method Hiding
+csharp
+Copy code
+using System;
+
+class Animal
+{
+    public void Speak()
+    {
+        Console.WriteLine("The animal makes a sound.");
+    }
+}
+
+class Cat : Animal
+{
+    public new void Speak()
+    {
+        Console.WriteLine("The cat meows.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Cat myCat = new Cat();
+        myCat.Speak();
+
+        Animal myAnimal = myCat;
+        myAnimal.Speak(); // Calls the base class method
+    }
+}
+3. Virtual and Override Keywords
+virtual: Marks a method in the base class as overridable.
+override: Used in the derived class to modify the behavior of the virtual method.
+4. Abstract Classes and Methods
+An abstract class serves as a blueprint for other classes. It can contain both abstract methods (without implementation) and concrete methods.
+
+Key Points
+Abstract methods must be implemented in derived classes.
+Abstract classes cannot be instantiated.
+Example: Abstract Classes and Methods
+csharp
+Copy code
+using System;
+
+abstract class Shape
+{
+    public abstract double GetArea(); // Abstract method
+
+    public void Display()
+    {
+        Console.WriteLine("This is a shape.");
+    }
+}
+
+class Circle : Shape
+{
+    public double Radius { get; set; }
+
+    public Circle(double radius)
+    {
+        Radius = radius;
+    }
+
+    public override double GetArea() // Implementing abstract method
+    {
+        return Math.PI * Radius * Radius;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Circle myCircle = new Circle(5);
+        myCircle.Display();
+        Console.WriteLine($"Area of the circle: {myCircle.GetArea()}");
+    }
+}
+5. Interfaces
+An interface defines a contract for classes to implement. Unlike abstract classes, interfaces cannot have fields or concrete methods (until C# 8.0, which introduced default interface methods).
+
+Key Points
+Use the interface keyword.
+A class can implement multiple interfaces.
+Methods in interfaces are implicitly public and abstract.
+Example: Interfaces
+csharp
+Copy code
+using System;
+
+interface IVehicle
+{
+    void Start();
+    void Stop();
+}
+
+class Car : IVehicle
+{
+    public void Start()
+    {
+        Console.WriteLine("The car is starting.");
+    }
+
+    public void Stop()
+    {
+        Console.WriteLine("The car is stopping.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        IVehicle myCar = new Car();
+        myCar.Start();
+        myCar.Stop();
+    }
+}
+Real-Time Scenarios
+Inheritance:
+
+Use case: In an e-commerce application, you might have a base class Product and derived classes like Electronics, Clothing, and Furniture.
+Example:
+csharp
+Copy code
+class Product
+{
+    public string Name { get; set; }
+    public double Price { get; set; }
+}
+
+class Electronics : Product
+{
+    public string Brand { get; set; }
+}
+Polymorphism:
+
+Use case: Handling different types of employees in a payroll system (FullTimeEmployee and ContractEmployee).
+Example:
+csharp
+Copy code
+class Employee
+{
+    public virtual void CalculateSalary()
+    {
+        Console.WriteLine("Calculating salary for a general employee.");
+    }
+}
+
+class FullTimeEmployee : Employee
+{
+    public override void CalculateSalary()
+    {
+        Console.WriteLine("Calculating salary for a full-time employee.");
+    }
+}
+Abstract Classes:
+
+Use case: Abstract class Payment with methods implemented in CreditCardPayment and PayPalPayment.
+Interfaces:
+
+Use case: A ILogging interface to ensure all services implement consistent logging methods.
+Best Practices
+Use inheritance for "is-a" relationships (e.g., a Dog is an Animal).
+Use abstract classes when you need to provide shared implementation and enforce derived class behavior.
+Use interfaces to define contracts for loosely coupled components.
+Avoid deep inheritance hierarchies to reduce complexity.
