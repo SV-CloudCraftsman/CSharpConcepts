@@ -1,0 +1,167 @@
+Basic C# Classes & Structures
+In C#, classes and structures (structs) are fundamental building blocks. They allow you to encapsulate data and behavior, but they differ in several key aspects, including memory allocation and behavior. Below is a detailed explanation with examples.
+
+1. Understanding and Working with Structs
+A struct in C# is a value type, typically used for small data structures that contain only data and do not require inheritance. Structs are ideal for representing lightweight objects like points, colors, or other simple data entities.
+
+Key Features of Structs
+Value type, stored on the stack.
+Do not support inheritance.
+Can have fields, properties, constructors, and methods.
+Default constructor (parameterless) is provided automatically.
+Example: Using a Struct
+csharp
+Copy code
+using System;
+
+struct Point
+{
+    public int X { get; set; }
+    public int Y { get; set; }
+
+    // Parameterized Constructor
+    public Point(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+
+    // Method
+    public void Display()
+    {
+        Console.WriteLine($"Point: ({X}, {Y})");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Creating an instance of struct
+        Point p1 = new Point(10, 20);
+        p1.Display();
+
+        // Using default constructor
+        Point p2 = new Point();
+        p2.X = 5;
+        p2.Y = 15;
+        p2.Display();
+    }
+}
+2. Value Types vs Reference Types
+Value Types
+Stored on the stack.
+Directly contain their value.
+Examples: int, float, bool, struct.
+Copying a value type creates a new copy of the value.
+Reference Types
+Stored on the heap, but the reference (pointer) is stored on the stack.
+Contain a reference to the memory location where the data is stored.
+Examples: class, string, object.
+Copying a reference type copies the reference, not the data.
+Example: Value Type vs Reference Type
+csharp
+Copy code
+using System;
+
+struct ValueTypeExample
+{
+    public int Number;
+}
+
+class ReferenceTypeExample
+{
+    public int Number;
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Value Type Example
+        ValueTypeExample v1 = new ValueTypeExample { Number = 10 };
+        ValueTypeExample v2 = v1; // Creates a copy
+        v2.Number = 20;
+
+        Console.WriteLine($"Value Type - v1: {v1.Number}, v2: {v2.Number}"); // v1: 10, v2: 20
+
+        // Reference Type Example
+        ReferenceTypeExample r1 = new ReferenceTypeExample { Number = 10 };
+        ReferenceTypeExample r2 = r1; // Points to the same memory
+        r2.Number = 20;
+
+        Console.WriteLine($"Reference Type - r1: {r1.Number}, r2: {r2.Number}"); // r1: 20, r2: 20
+    }
+}
+3. Real-Time Examples
+Scenario 1: GPS Location (Struct Example)
+For representing a simple GPS location, we can use a struct because it has minimal data.
+
+csharp
+Copy code
+struct Location
+{
+    public double Latitude { get; }
+    public double Longitude { get; }
+
+    public Location(double latitude, double longitude)
+    {
+        Latitude = latitude;
+        Longitude = longitude;
+    }
+
+    public void ShowLocation()
+    {
+        Console.WriteLine($"Latitude: {Latitude}, Longitude: {Longitude}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Location loc = new Location(37.7749, -122.4194);
+        loc.ShowLocation();
+    }
+}
+Scenario 2: Customer Information (Class Example)
+For representing customer information, a class is more suitable because it might involve additional behaviors and lifetime management.
+
+csharp
+Copy code
+class Customer
+{
+    public int CustomerID { get; set; }
+    public string Name { get; set; }
+
+    public Customer(int id, string name)
+    {
+        CustomerID = id;
+        Name = name;
+    }
+
+    public void DisplayDetails()
+    {
+        Console.WriteLine($"Customer ID: {CustomerID}, Name: {Name}");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Customer customer = new Customer(101, "Alice");
+        customer.DisplayDetails();
+    }
+}
+4. Key Differences Between Classes and Structs
+Aspect	Class	Struct
+Type	Reference Type	Value Type
+Memory	Stored on heap	Stored on stack
+Inheritance	Supports inheritance	Does not support inheritance
+Performance	Slightly slower due to heap allocation	Faster due to stack allocation
+Use Case	Complex entities with behavior	Lightweight entities with only data
+Best Practices
+Use structs for lightweight, immutable data objects like points or coordinates.
+Use classes for entities requiring inheritance, complex behaviors, or mutable states.
+Be mindful of memory allocation when deciding between structs and classes in performance-critical applications.
