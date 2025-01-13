@@ -1,0 +1,334 @@
+SOLID Principles in C#
+The SOLID principles are a set of design principles aimed at improving software development by making code more maintainable, scalable, and testable. These principles help developers write clean, modular, and loosely coupled code.
+
+1. Single Responsibility Principle (SRP)
+Definition:
+A class should have only one reason to change. In other words, a class should have a single responsibility or function.
+
+Real-Time Example:
+Suppose we are building a system for managing orders.
+
+Violation of SRP:
+
+csharp
+Copy code
+public class OrderManager
+{
+    public void CreateOrder()
+    {
+        // Logic to create an order
+    }
+
+    public void GenerateInvoice()
+    {
+        // Logic to generate an invoice
+    }
+
+    public void SendEmailNotification()
+    {
+        // Logic to send an email
+    }
+}
+Here, the OrderManager class has multiple responsibilities: creating orders, generating invoices, and sending notifications.
+
+Adhering to SRP:
+
+csharp
+Copy code
+public class OrderManager
+{
+    public void CreateOrder()
+    {
+        // Logic to create an order
+    }
+}
+
+public class InvoiceManager
+{
+    public void GenerateInvoice()
+    {
+        // Logic to generate an invoice
+    }
+}
+
+public class NotificationService
+{
+    public void SendEmailNotification()
+    {
+        // Logic to send an email
+    }
+}
+Now, each class has a single responsibility.
+
+2. Open/Closed Principle (OCP)
+Definition:
+A class should be open for extension but closed for modification.
+
+Real-Time Example:
+Adding new payment methods to an e-commerce system.
+
+Violation of OCP:
+
+csharp
+Copy code
+public class PaymentProcessor
+{
+    public void ProcessPayment(string paymentType)
+    {
+        if (paymentType == "CreditCard")
+        {
+            // Process credit card payment
+        }
+        else if (paymentType == "PayPal")
+        {
+            // Process PayPal payment
+        }
+    }
+}
+Adding a new payment method requires modifying the existing class.
+
+Adhering to OCP:
+
+csharp
+Copy code
+public interface IPayment
+{
+    void ProcessPayment();
+}
+
+public class CreditCardPayment : IPayment
+{
+    public void ProcessPayment()
+    {
+        // Process credit card payment
+    }
+}
+
+public class PayPalPayment : IPayment
+{
+    public void ProcessPayment()
+    {
+        // Process PayPal payment
+    }
+}
+
+public class PaymentProcessor
+{
+    public void ProcessPayment(IPayment payment)
+    {
+        payment.ProcessPayment();
+    }
+}
+Now, adding a new payment method requires only creating a new class that implements IPayment.
+
+3. Liskov Substitution Principle (LSP)
+Definition:
+Subtypes must be substitutable for their base types without altering the correctness of the program.
+
+Real-Time Example:
+Consider shapes like rectangles and squares.
+
+Violation of LSP:
+
+csharp
+Copy code
+public class Rectangle
+{
+    public virtual int Width { get; set; }
+    public virtual int Height { get; set; }
+}
+
+public class Square : Rectangle
+{
+    public override int Width
+    {
+        set { base.Width = base.Height = value; }
+    }
+
+    public override int Height
+    {
+        set { base.Width = base.Height = value; }
+    }
+}
+Using a square in place of a rectangle can produce unexpected results.
+
+Adhering to LSP:
+
+csharp
+Copy code
+public interface IShape
+{
+    int Area();
+}
+
+public class Rectangle : IShape
+{
+    public int Width { get; set; }
+    public int Height { get; set; }
+
+    public int Area() => Width * Height;
+}
+
+public class Square : IShape
+{
+    public int Side { get; set; }
+
+    public int Area() => Side * Side;
+}
+Now, Rectangle and Square are separate implementations adhering to the interface.
+
+4. Interface Segregation Principle (ISP)
+Definition:
+A class should not be forced to implement interfaces it does not use.
+
+Real-Time Example:
+Consider different types of printers (e.g., 2D printer, 3D printer).
+
+Violation of ISP:
+
+csharp
+Copy code
+public interface IPrinter
+{
+    void Print();
+    void Scan();
+}
+
+public class TwoDPrinter : IPrinter
+{
+    public void Print()
+    {
+        // Printing logic
+    }
+
+    public void Scan()
+    {
+        throw new NotImplementedException();
+    }
+}
+The TwoDPrinter is forced to implement Scan, which it does not support.
+
+Adhering to ISP:
+
+csharp
+Copy code
+public interface IPrint
+{
+    void Print();
+}
+
+public interface IScan
+{
+    void Scan();
+}
+
+public class TwoDPrinter : IPrint
+{
+    public void Print()
+    {
+        // Printing logic
+    }
+}
+
+public class AllInOnePrinter : IPrint, IScan
+{
+    public void Print()
+    {
+        // Printing logic
+    }
+
+    public void Scan()
+    {
+        // Scanning logic
+    }
+}
+Now, each printer only implements the interfaces it needs.
+
+5. Dependency Inversion Principle (DIP)
+Definition:
+High-level modules should not depend on low-level modules. Both should depend on abstractions.
+
+Real-Time Example:
+Logging functionality in an application.
+
+Violation of DIP:
+
+csharp
+Copy code
+public class FileLogger
+{
+    public void Log(string message)
+    {
+        // Write log to a file
+    }
+}
+
+public class Application
+{
+    private FileLogger _logger = new FileLogger();
+
+    public void Run()
+    {
+        _logger.Log("Application started.");
+    }
+}
+Here, the Application class is tightly coupled to the FileLogger implementation.
+
+Adhering to DIP:
+
+csharp
+Copy code
+public interface ILogger
+{
+    void Log(string message);
+}
+
+public class FileLogger : ILogger
+{
+    public void Log(string message)
+    {
+        // Write log to a file
+    }
+}
+
+public class DatabaseLogger : ILogger
+{
+    public void Log(string message)
+    {
+        // Write log to a database
+    }
+}
+
+public class Application
+{
+    private readonly ILogger _logger;
+
+    public Application(ILogger logger)
+    {
+        _logger = logger;
+    }
+
+    public void Run()
+    {
+        _logger.Log("Application started.");
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        ILogger logger = new FileLogger();
+        var app = new Application(logger);
+        app.Run();
+    }
+}
+Now, the Application class depends on the abstraction (ILogger), making it easy to swap loggers.
+
+Summary
+S: Single Responsibility - Each class has one responsibility.
+O: Open/Closed - Classes are open for extension but closed for modification.
+L: Liskov Substitution - Subtypes should replace base types without breaking functionality.
+I: Interface Segregation - Use small, specific interfaces.
+D: Dependency Inversion - Depend on abstractions, not implementations.
+Applying SOLID principles leads to cleaner, maintainable, and scalable code, which is essential for long-term software development success.
