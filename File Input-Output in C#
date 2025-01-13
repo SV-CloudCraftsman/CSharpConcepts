@@ -1,0 +1,207 @@
+File I/O in C#
+File I/O (Input/Output) in C# refers to operations involving reading data from and writing data to files. The System.IO namespace provides classes to handle file and directory operations.
+
+1. Reading and Writing Files
+a) Using FileStream
+FileStream is a low-level way to read and write data to files.
+
+Example: Writing and Reading a File with FileStream
+
+csharp
+Copy code
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string filePath = "example.txt";
+        string dataToWrite = "Hello, FileStream!";
+
+        // Writing to a file
+        using (FileStream fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+        {
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(dataToWrite);
+            fileStream.Write(data, 0, data.Length);
+        }
+        Console.WriteLine($"Data written to {filePath}");
+
+        // Reading from a file
+        using (FileStream fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read))
+        {
+            byte[] data = new byte[fileStream.Length];
+            fileStream.Read(data, 0, data.Length);
+            string readData = System.Text.Encoding.UTF8.GetString(data);
+            Console.WriteLine($"Data read from file: {readData}");
+        }
+    }
+}
+b) Using StreamReader and StreamWriter
+These are high-level classes for reading and writing text files.
+
+Example: Writing and Reading Text Files
+
+csharp
+Copy code
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string filePath = "example.txt";
+        string dataToWrite = "This is an example using StreamReader and StreamWriter.";
+
+        // Writing to a file
+        using (StreamWriter writer = new StreamWriter(filePath))
+        {
+            writer.WriteLine(dataToWrite);
+            writer.WriteLine("Additional line.");
+        }
+        Console.WriteLine($"Data written to {filePath}");
+
+        // Reading from a file
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+            string line;
+            Console.WriteLine("Reading from file:");
+            while ((line = reader.ReadLine()) != null)
+            {
+                Console.WriteLine(line);
+            }
+        }
+    }
+}
+2. Handling Directories and File Manipulation
+a) Managing Directories
+The Directory and DirectoryInfo classes are used for creating, deleting, and listing directories.
+
+Example: Creating and Listing Directories
+
+csharp
+Copy code
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string dirPath = "TestDirectory";
+
+        // Create a directory
+        if (!Directory.Exists(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+            Console.WriteLine($"Directory created: {dirPath}");
+        }
+
+        // List all directories in the current directory
+        Console.WriteLine("Directories in the current path:");
+        string[] directories = Directory.GetDirectories(".");
+        foreach (var dir in directories)
+        {
+            Console.WriteLine(dir);
+        }
+    }
+}
+b) Managing Files
+The File and FileInfo classes provide methods for creating, copying, moving, and deleting files.
+
+Example: File Copy and Delete
+
+csharp
+Copy code
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string sourcePath = "source.txt";
+        string destinationPath = "destination.txt";
+
+        // Create a file
+        File.WriteAllText(sourcePath, "This is the source file.");
+
+        // Copy the file
+        if (File.Exists(sourcePath))
+        {
+            File.Copy(sourcePath, destinationPath, true);
+            Console.WriteLine($"File copied to {destinationPath}");
+        }
+
+        // Delete the source file
+        if (File.Exists(sourcePath))
+        {
+            File.Delete(sourcePath);
+            Console.WriteLine($"File deleted: {sourcePath}");
+        }
+    }
+}
+Real-World Example: Logging System
+Example: Writing Logs to a File
+
+csharp
+Copy code
+using System;
+using System.IO;
+
+class Logger
+{
+    private static readonly string logFilePath = "log.txt";
+
+    public static void Log(string message)
+    {
+        using (StreamWriter writer = new StreamWriter(logFilePath, true))
+        {
+            writer.WriteLine($"{DateTime.Now}: {message}");
+        }
+    }
+
+    public static void DisplayLogs()
+    {
+        if (File.Exists(logFilePath))
+        {
+            Console.WriteLine("Log file contents:");
+            using (StreamReader reader = new StreamReader(logFilePath))
+            {
+                string line;
+                while ((line = reader.ReadLine()) != null)
+                {
+                    Console.WriteLine(line);
+                }
+            }
+        }
+        else
+        {
+            Console.WriteLine("No logs found.");
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Logger.Log("Application started.");
+        Logger.Log("Performing some operations...");
+        Logger.Log("Application ended.");
+
+        Logger.DisplayLogs();
+    }
+}
+Key Points
+Use Cases:
+
+FileStream: For low-level byte manipulation.
+StreamReader and StreamWriter: For text files and high-level operations.
+Directory and File: For file system navigation and manipulation.
+Best Practices:
+
+Always use using statements to ensure resources are properly disposed.
+Validate paths and check for file existence before performing operations.
+Use asynchronous file operations (FileStream.ReadAsync) for improved performance in large applications.
