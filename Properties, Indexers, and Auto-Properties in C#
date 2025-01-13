@@ -1,0 +1,203 @@
+Properties, Indexers, and Auto-Properties in C#
+In C#, properties and indexers provide a flexible mechanism to access and manipulate data in a controlled way, offering encapsulation while keeping the syntax clean and intuitive.
+
+1. Properties
+Properties allow you to expose private fields of a class in a controlled manner. They consist of get and set accessors.
+
+a) Defining Properties
+Properties allow logic to be executed when retrieving or setting values.
+
+Example: Using Properties
+
+csharp
+Copy code
+using System;
+
+class Person
+{
+    private string name;
+
+    public string Name
+    {
+        get { return name; }
+        set
+        {
+            if (!string.IsNullOrEmpty(value))
+                name = value;
+            else
+                throw new ArgumentException("Name cannot be empty.");
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Person person = new Person();
+        person.Name = "John"; // Setting the property
+        Console.WriteLine($"Person's Name: {person.Name}"); // Getting the property
+    }
+}
+b) Auto-Implemented Properties
+When no additional logic is needed in the get or set accessors, you can use auto-implemented properties.
+
+Example: Auto-Implemented Properties
+
+csharp
+Copy code
+using System;
+
+class Product
+{
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Product product = new Product { Name = "Laptop", Price = 1500.00M };
+        Console.WriteLine($"Product: {product.Name}, Price: {product.Price}");
+    }
+}
+2. Indexers
+Indexers allow objects of a class to be indexed like arrays. They are useful when a class logically represents a collection of items.
+
+a) Defining Indexers
+Indexers are defined using the this keyword.
+
+Example: Class Indexing with an Indexer
+
+csharp
+Copy code
+using System;
+
+class Library
+{
+    private string[] books = new string[5];
+
+    public string this[int index]
+    {
+        get
+        {
+            if (index >= 0 && index < books.Length)
+                return books[index];
+            throw new IndexOutOfRangeException("Invalid index.");
+        }
+        set
+        {
+            if (index >= 0 && index < books.Length)
+                books[index] = value;
+            else
+                throw new IndexOutOfRangeException("Invalid index.");
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Library library = new Library();
+        library[0] = "C# Programming";
+        library[1] = "ASP.NET Core Development";
+        Console.WriteLine(library[0]); // Output: C# Programming
+        Console.WriteLine(library[1]); // Output: ASP.NET Core Development
+    }
+}
+b) Indexers with Custom Keys
+Indexers can also use non-integer keys, such as strings.
+
+Example: Indexer with String Keys
+
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+
+class Configuration
+{
+    private Dictionary<string, string> settings = new Dictionary<string, string>();
+
+    public string this[string key]
+    {
+        get
+        {
+            return settings.ContainsKey(key) ? settings[key] : "Key not found";
+        }
+        set
+        {
+            settings[key] = value;
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Configuration config = new Configuration();
+        config["Theme"] = "Dark";
+        config["Language"] = "English";
+
+        Console.WriteLine($"Theme: {config["Theme"]}");
+        Console.WriteLine($"Language: {config["Language"]}");
+        Console.WriteLine($"Font: {config["Font"]}"); // Key not found
+    }
+}
+Real-World Example: Managing a Product Inventory
+Example: Combining Properties and Indexers
+
+csharp
+Copy code
+using System;
+using System.Collections.Generic;
+
+class Inventory
+{
+    private Dictionary<string, int> items = new Dictionary<string, int>();
+
+    public string StoreName { get; set; }
+
+    public int this[string itemName]
+    {
+        get
+        {
+            return items.ContainsKey(itemName) ? items[itemName] : 0;
+        }
+        set
+        {
+            items[itemName] = value;
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        Inventory inventory = new Inventory { StoreName = "Tech Store" };
+        inventory["Laptop"] = 10; // Adding stock
+        inventory["Mouse"] = 50;
+
+        Console.WriteLine($"{inventory.StoreName} Inventory:");
+        Console.WriteLine($"Laptops: {inventory["Laptop"]}");
+        Console.WriteLine($"Mice: {inventory["Mouse"]}");
+        Console.WriteLine($"Keyboards: {inventory["Keyboard"]}"); // 0 (not added yet)
+    }
+}
+Key Points
+Properties:
+
+Provide controlled access to fields.
+Use auto-properties for simplicity when no extra logic is required.
+Indexers:
+
+Allow object instances to be accessed like arrays.
+Can work with custom data types, like strings or objects.
+Best Practices:
+
+Use properties for encapsulation and validation.
+Use indexers for classes that represent collections, making them intuitive to use.
