@@ -1,0 +1,163 @@
+Extension Methods in C#
+Definition:
+Extension methods allow you to add new methods to existing types (classes, structs, interfaces) without modifying their source code. These methods are static and reside in static classes, but they are called as if they are instance methods of the extended type.
+
+Syntax:
+csharp
+Copy code
+public static class ClassName
+{
+    public static ReturnType MethodName(this Type parameterName, ...)
+    {
+        // Method implementation
+    }
+}
+The keyword this before the first parameter in the method signature specifies the type to be extended.
+Use Cases:
+Adding utility methods to built-in .NET types.
+Enhancing third-party libraries without altering their source code.
+Improving readability by extending custom types with helpful methods.
+Simple Example: Adding a Method to Reverse Strings
+csharp
+Copy code
+public static class StringExtensions
+{
+    public static string ReverseString(this string str)
+    {
+        if (string.IsNullOrEmpty(str))
+            return str;
+
+        char[] charArray = str.ToCharArray();
+        Array.Reverse(charArray);
+        return new string(charArray);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        string input = "Hello";
+        string reversed = input.ReverseString(); // Using the extension method
+        Console.WriteLine($"Original: {input}, Reversed: {reversed}");
+    }
+}
+Output:
+
+yaml
+Copy code
+Original: Hello, Reversed: olleH
+Real-Time Example 1: Formatting Dates
+csharp
+Copy code
+public static class DateTimeExtensions
+{
+    public static string ToCustomFormat(this DateTime dateTime, string format)
+    {
+        return dateTime.ToString(format);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        DateTime now = DateTime.Now;
+        Console.WriteLine(now.ToCustomFormat("dd-MM-yyyy HH:mm:ss"));
+    }
+}
+Output (Example):
+
+Copy code
+13-01-2025 14:30:15
+Real-Time Example 2: Checking if a Number is Even
+csharp
+Copy code
+public static class IntExtensions
+{
+    public static bool IsEven(this int number)
+    {
+        return number % 2 == 0;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        int number = 42;
+        Console.WriteLine($"{number} is even: {number.IsEven()}");
+    }
+}
+Output:
+
+python
+Copy code
+42 is even: True
+Real-Time Example 3: Chaining Extension Methods for String Manipulation
+csharp
+Copy code
+public static class StringExtensions
+{
+    public static string ToUpperCase(this string str)
+    {
+        return str.ToUpper();
+    }
+
+    public static string AppendExclamation(this string str)
+    {
+        return str + "!";
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        string message = "hello";
+        string result = message.ToUpperCase().AppendExclamation();
+        Console.WriteLine(result);
+    }
+}
+Output:
+
+Copy code
+HELLO!
+Key Points:
+Static Requirement: The class containing extension methods must be static.
+this Keyword: The first parameter of the extension method must start with this, followed by the type being extended.
+Namespace Awareness: You must include the namespace containing the extension method for it to be available.
+Not Overridable: Extension methods cannot override existing instance methods.
+Real-Time Example 4: Extension Method for Lists
+csharp
+Copy code
+using System.Collections.Generic;
+using System.Linq;
+
+public static class ListExtensions
+{
+    public static int CountGreaterThan(this List<int> list, int value)
+    {
+        return list.Count(x => x > value);
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        List<int> numbers = new List<int> { 1, 5, 8, 12, 20 };
+        int count = numbers.CountGreaterThan(10);
+        Console.WriteLine($"Numbers greater than 10: {count}");
+    }
+}
+Output:
+
+yaml
+Copy code
+Numbers greater than 10: 2
+When to Use Extension Methods:
+To add utility functions to existing types.
+When you don't have access to the source code of a type (e.g., third-party libraries).
+To keep your code cleaner and more readable.
+Extension methods are a powerful feature in C# that enhance productivity and enable you to work seamlessly with types, improving the readability and maintainability of your code.
