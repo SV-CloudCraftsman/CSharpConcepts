@@ -7,8 +7,6 @@ An array is a collection of elements of the same type, stored in contiguous memo
 Single-Dimensional Arrays
 Definition: A linear array with elements stored sequentially.
 Example:
-csharp
-Copy code
 using System;
 
 class Program
@@ -28,11 +26,10 @@ class Program
         }
     }
 }
+
 Multi-Dimensional Arrays
 Definition: Arrays with more than one dimension, such as 2D arrays.
 Example:
-csharp
-Copy code
 using System;
 
 class Program
@@ -60,14 +57,13 @@ class Program
         }
     }
 }
+
 2. Collections
 Collections in C# provide more flexible ways to store and manipulate data compared to arrays.
 
 Lists
 Definition: A dynamic array that can grow or shrink in size.
 Example:
-csharp
-Copy code
 using System;
 using System.Collections.Generic;
 
@@ -89,11 +85,10 @@ class Program
         }
     }
 }
+
 Dictionaries
 Definition: A collection of key-value pairs.
 Example:
-csharp
-Copy code
 using System;
 using System.Collections.Generic;
 
@@ -119,11 +114,10 @@ class Program
         }
     }
 }
+
 Queues
 Definition: A first-in-first-out (FIFO) collection.
 Example:
-csharp
-Copy code
 using System;
 using System.Collections.Generic;
 
@@ -144,11 +138,10 @@ class Program
         }
     }
 }
+
 Stacks
 Definition: A last-in-first-out (LIFO) collection.
 Example:
-csharp
-Copy code
 using System;
 using System.Collections.Generic;
 
@@ -169,12 +162,11 @@ class Program
         }
     }
 }
+
 3. Iterating Over Collections
 You can iterate over collections using loops like for, foreach, or while.
 
 Example: Iterating Over a List
-csharp
-Copy code
 using System;
 using System.Collections.Generic;
 
@@ -197,6 +189,7 @@ class Program
         }
     }
 }
+
 Real-Time Applications
 Shopping Cart System (List & Dictionary)
 
